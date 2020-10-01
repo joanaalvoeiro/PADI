@@ -1,1 +1,2 @@
-Joana = trash
+Joana = something not good but polite
+
