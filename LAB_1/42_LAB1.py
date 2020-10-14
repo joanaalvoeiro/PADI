@@ -227,13 +227,9 @@ def compute_dist(chain, initDist, nStep):
 
 # Is the chain ergodic? Justify, based on the results above.
 
-# <span style="color:blue">_Add your answer here:_</span>
+# <span style="color:blue">_Add your answer here:_</span> We can conclude this chain is ergodic since for a high value of t (time step) it converges to the stationary distribution calculated above.
 
-# In[27]:
-
-
-print("Activity 4: We can conclude this chain is ergodic since for a high value of t (time step) it converges to the stationary distribution calculated with stationary_dist.")
-
+# ![image.png](attachment:image.png)
 
 # ### 3. Simulation
 # 
@@ -331,7 +327,6 @@ plt.hist(trajs, weights=weights)
 plt.locator_params(axis='x', integer=True)
 plt.xlabel("Markov Chain States")
 plt.ylabel("Relative Frequency")
-plt.show()
 
 
 unique, counts = np.unique(traj, return_counts=True)
