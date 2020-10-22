@@ -70,6 +70,45 @@ def load_mdp(file, discountFactor):
     return (data['X'],data['A'],data['P'],data['c'],discountFactor)
 
 
+# In[ ]:
+
+
+#Sanity Check
+""" import numpy.random as rand
+
+M = load_mdp('maze.npz', 0.9)
+
+rand.seed(42)
+
+# States
+print('Number of states:', len(M[0]))
+
+# Random state
+s = rand.randint(len(M[0]))
+print('Random state:', M[0][s])
+
+# Final state
+print('Final state:', M[0][-1])
+
+# Actions
+print('Number of actions:', len(M[1]))
+
+# Random action
+a = rand.randint(len(M[1]))
+print('Random action:', M[1][a])
+
+# Transition probabilities
+print('Transition probabilities for the selected state/action:')
+print(M[2][a][s, :])
+
+# Cost
+print('Cost for the selected state/action:')
+print(M[3][s, a])
+
+# Discount
+print('Discount:', M[4]) """
+
+
 # We provide below an example of application of the function with the file `maze.npz` that you can use as a first "sanity check" for your code. Note that, even fixing the seed, the results you obtain may slightly differ.
 # 
 # ```python
@@ -157,6 +196,30 @@ def noisy_policy(mdp, a, eps):
     policy = np.tile(policy_row, (n_states, 1))
     
     return policy
+
+
+# In[ ]:
+
+
+#Sanity Check
+""" # Noiseless policy for action "Left" (action index: 2)
+pol_noiseless = noisy_policy(M, 2, 0.)
+
+# Random state
+s = rand.randint(len(M[0]))
+
+# Policy at selected state
+print('Random state:', M[0][s])
+print('Noiseless policy at selected state:', pol_noiseless[s, :])
+
+# Noisy policy for action "Left" (action index: 2)
+pol_noisy = noisy_policy(M, 2, 0.1)
+
+# Policy at selected state
+print('Noisy policy at selected state:', pol_noisy[s, :])
+
+# Random policy for action "Left" (action index: 2)
+pol_random = noisy_policy(M, 2, 0.75) """
 
 
 # We provide below an example of application of the function with MDP from the example in **Activity 1**, that you can use as a first "sanity check" for your code. Note that, even fixing the seed, the results you obtain may slightly differ. Note also that your function should work with **any** MDP that is specified as a tuple like the one from **Activity 1**.
@@ -263,6 +326,24 @@ def evaluate_pol(mdp, pol):
     return Jpi
 
 
+# In[ ]:
+
+
+#Sanity Check
+""" Jpi = evaluate_pol(M, pol_noisy)
+
+rand.seed(42)
+
+s = rand.randint(len(M[0]))
+print('Cost to go at state %s:' % M[0][s], Jpi[s])
+
+s = rand.randint(len(M[0]))
+print('Cost to go at state %s:' % M[0][s], Jpi[s])
+
+s = rand.randint(len(M[0]))
+print('Cost to go at state %s:' % M[0][s], Jpi[s]) """
+
+
 # As an example, you can evaluate the random policy from **Activity 2** in the MDP from **Activity 1**.
 # 
 # ```python
@@ -343,6 +424,26 @@ def value_iteration(mdp):
     return J
 
 
+# In[ ]:
+
+
+#Sanity Check
+""" Jopt = value_iteration(M)
+
+rand.seed(42)
+
+s = rand.randint(len(M[0]))
+print('Cost to go at state %s:' % M[0][s], Jopt[s])
+
+s = rand.randint(len(M[0]))
+print('Cost to go at state %s:' % M[0][s], Jopt[s])
+
+s = rand.randint(len(M[0]))
+print('Cost to go at state %s:' % M[0][s], Jopt[s])
+
+print('\nIs the policy from Activity 2 optimal?', np.all(np.isclose(Jopt, Jpi))) """
+
+
 # For example, the optimal cost-to-go for the MDP from **Activity 1** is can be computed as follows.
 # 
 # ```python
@@ -420,6 +521,30 @@ def policy_iteration(mdp):
     print("N. iterations: {}".format(i))
 
     return pi
+
+
+# In[ ]:
+
+
+#Sanity Check
+""" popt = policy_iteration(M)
+
+rand.seed(42)
+
+# Select random state, and action using the policy computed
+s = rand.randint(len(M[0]))
+a = rand.choice(len(M[1]), p=popt[s, :])
+print('Policy at state %s: %s' % (M[0][s], M[1][a]))
+
+# Select random state, and action using the policy computed
+s = rand.randint(len(M[0]))
+a = rand.choice(len(M[1]), p=popt[s, :])
+print('Policy at state %s: %s' % (M[0][s], M[1][a]))
+
+# Select random state, and action using the policy computed
+s = rand.randint(len(M[0]))
+a = rand.choice(len(M[1]), p=popt[s, :])
+print('Policy at state %s: %s' % (M[0][s], M[1][a])) """
 
 
 # For example, the optimal policy for the MDP from **Activity 1** is can be computed as follows.
