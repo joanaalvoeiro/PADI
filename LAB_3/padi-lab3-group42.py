@@ -230,39 +230,36 @@ print('Discount:', M[6])
 # 
 # ---
 
-# In[3]:
+# In[115]:
 
 
 # Add your code here.
 def gen_trajectory(pomdp,stateIndex, n):
-    states = pomdp[0]
-    actions = pomdp[1]
-    observations = pomdp[2]
-    transProbAct = pomdp[3]
-    observationP = pomdp[4]
-    transitions = []
+    nStates = len(pomdp[0])
+    nActions = len(pomdp[1])
+    nObservations = len(pomdp[2])
+    P = pomdp[3]
+    O = pomdp[4]
     
-    trajectoryActions = np.zeros((n), dtype=int)
-    trajectory = np.zeros((n+1), dtype=int)
-    trajectoryObs = np.zeros((n), dtype=int)
+    x = stateIndex
     
-    trajectory[0] = stateIndex
+    xlist = [x]
+    alist = []
+    olist = []
+    
     for i in range(n):
-        action = rand.randint(len(actions))
-        transitions = transProbAct[action]
+        a = rand.choice(nActions)
+        x = rand.choice(nStates, p=P[a][x,:])
+        o = rand.choice(nObservations, p=O[a][x,:])
         
-        state = rand.choice(states,p=transitions[stateIndex])
-        stateIndex = list(states).index(state)
+        xlist.append(x)
+        alist.append(a)
+        olist.append(o)
         
-        obs = rand.choice(observations,p=observationP[action][stateIndex])
-        trajectoryActions[i] = action
-        trajectory[i+1] = stateIndex
-        trajectoryObs[i] = list(observations).index(obs)
-        
-    return (trajectory,trajectoryActions,trajectoryObs)
+    return (np.array(xlist), np.array(alist), np.array(olist))
 
 
-# In[4]:
+# In[116]:
 
 
 '''
@@ -361,37 +358,31 @@ print('\b\b}')
 # 
 # ---
 
-# In[103]:
+# In[130]:
 
-
-def updateBelief(pomdp,b,a,o):
-    P = pomdp[3][a]
-    o = np.diag(pomdp[4][a][:,o])
-    P_o = np.dot(P, o)
-    
-    numerator = b.dot(P_o)
-    sumNum = np.sum(numerator)
-    
-    return np.divide(numerator,sumNum)
-    
 
 def sample_beliefs(pomdp, n):
-    states = pomdp[0]
-    nStates = len(states)
-
-    randomStateIndex = rand.randint(nStates)
+    nStates = len(pomdp[0])
+    nActions = len(pomdp[1])
+    nObservations = len(pomdp[2])
+    P = pomdp[3]
+    O = pomdp[4]
     
-    res = []
+    def update_beliefs(b, o, a):
+        bnew = b.dot(P[a].dot(np.eye(nStates) * O[a][:,o]))
+        return bnew/bnew.sum(axis=1)
+
+    x0 = rand.randint(nStates)
 
     #Generate n step trajetory from random init
-    trajectory = gen_trajectory(pomdp,randomStateIndex, n)
-    b = np.full((1,nStates),1/nStates)
+    trajectory = gen_trajectory(pomdp,x0, n)
+    b = np.ones((1,nStates))/nStates
 
-    res.append(b)
-    for i in range(1,n):
+    res = (b,)
+    for i in range(n):
         a = trajectory[1][i]
         o = trajectory[2][i]
-        b = updateBelief(pomdp, b, a, o)
+        b = update_beliefs(b, o, a)
 
         not_duplicate = True
 
@@ -400,10 +391,11 @@ def sample_beliefs(pomdp, n):
                 not_duplicate = False
                 break
         if(not_duplicate):
-            res.append(b)
+            res += (b,)
 
     #Compute sequence of beliefs
     #Return tuples of belief in row vector form
+
     '''
     for i in res[:10][1][0]:
         print(i)
@@ -415,7 +407,7 @@ def sample_beliefs(pomdp, n):
     return tuple(res)
 
 
-# In[104]:
+# In[131]:
 
 
 '''
@@ -600,7 +592,7 @@ print('Best action at state %s:' % M[0][s], np.argmin(Q[s, :]))
 # 
 # ---
 
-# In[100]:
+# In[132]:
 
 
 # Add your code here.
@@ -615,7 +607,6 @@ def getOptActions(qFn):
 def get_heuristic_action(belief, qFn, mode):
     nActions = qFn.shape[1]
     optActions = getOptActions(qFn)
-    
 
     if(mode=="mls"):
         max_bel = np.max(belief[0])
@@ -639,12 +630,11 @@ def get_heuristic_action(belief, qFn, mode):
         return None
 
 
-# In[101]:
+# In[133]:
 
 
 '''
 for b in B[:10]:
-    print(b[0][31])
     if np.all(b > 0):
         print('Belief (approx.) uniform')
     else:
@@ -663,7 +653,7 @@ for b in B[:10]:
     print('AV action:', M[1][get_heuristic_action(b, Q, 'av')], end='; ')
     print('Q-MDP action:', M[1][get_heuristic_action(b, Q, 'q-mdp')])
 
-    print()
+    print() 
 '''
 
 
